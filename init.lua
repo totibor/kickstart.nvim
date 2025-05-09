@@ -234,6 +234,35 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- [[ Custom functions ]]
+-- Function to copy all open buffer content to clipboard
+local function copy_all_buffers_to_clipboard()
+  local content = ''
+  -- Iterate over all valid buffers
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      -- Get the buffer name (optional, but can be helpful)
+      local bufname = vim.api.nvim_buf_get_name(bufnr)
+      if bufname and bufname ~= '' then
+        local filename = vim.fn.fnamemodify(bufname, ':t')
+        content = content .. '-- File: ' .. filename .. '\n'
+      end
+      -- Get all lines from the buffer
+      local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+      content = content .. table.concat(lines, '\n') .. '\n\n'
+    end
+  end
+
+  -- Copy the collected content to the clipboard
+  vim.fn.setreg('+', content)
+  vim.fn.setreg('*', content)
+
+  vim.notify('Copied content of all open buffers to clipboard!', vim.log.levels.INFO)
+end
+
+-- Map the function to the key combination Control + A
+vim.keymap.set('i', '<C-a>', copy_all_buffers_to_clipboard, { noremap = true, silent = true })
+
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
