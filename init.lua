@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -277,6 +277,22 @@ vim.keymap.set('i', '<C-a>', copy_all_buffers_to_clipboard, { noremap = true, si
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+
+  { -- A file explorer tree for neovim
+    'nvim-tree/nvim-tree.lua',
+    config = function()
+      require('nvim-tree').setup {
+        view = {
+          width = 30,
+        },
+        renderer = {
+          group_empty = true,
+        },
+      }
+      -- Keymap for opening/closing the panel
+      -- vim.keymap.set('n', '<C-[>', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
+    end,
+  },
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
